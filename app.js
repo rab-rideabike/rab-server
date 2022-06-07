@@ -1,4 +1,8 @@
 const express = require('express');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 const app = express();
 
@@ -11,8 +15,8 @@ app.get('/new', (req, res) => {
     res.send('This is the New Route of the Ride A Bike Server');
 });
 
-const port = process.env.port || 5051;
+const PORT = process.env.PORT || 5051;
 
-app.listen(port, ()=> {
-    console.log(`Listening on the Port ${port}`);
-})
+mongoose.connect(process.env.DATABASE_URL, {useNewUrlParser : true, useUnifiedTopology: true})
+        .then(() => app.listen(PORT, ()=> console.log(`Server Running on port ${PORT}`)))
+        .catch((error)=> console.log(error.message));
