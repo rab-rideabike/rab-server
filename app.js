@@ -11,7 +11,8 @@ app.get('/new', (req, res) => {
     res.send('This is the New Route of the Ride A Bike Server');
 });
 
+const port = process.env.port || 5051;
 
-app.listen(5051, ()=> {
-    console.log('Listening on the Port 5051')
+app.listen(port, ()=> {
+    console.log(`Listening on the Port ${port}`);
 })
