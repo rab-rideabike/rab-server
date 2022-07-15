@@ -1,4 +1,6 @@
 const User = require('../models/UserModel');
+const catchAsyc = require('../utils/catchAsync');
+
 const jwt = require('jsonwebtoken');
 
 const signToken = (id) =>
@@ -6,14 +8,15 @@ const signToken = (id) =>
     expiresIn: process.env.JWT_EXPIRY_TIME,
   });
 
-exports.signUp = async (req, res) => {
-  try {
+exports.signUp = catchAsyc(async (req, res, next) => {
+
     const user = await User.create({
       name: req.body.name,
       mobile: req.body.mobile,
       email: req.body.email,
       password: req.body.password,
     });
+
     res.status(201).send({
       status: 'success',
       token: signToken(user._id),
@@ -21,16 +24,10 @@ exports.signUp = async (req, res) => {
         user,
       },
     });
-  } catch (err) {
-    res.status(400).send({
-      status: 'failed',
-      message: err,
-    });
-  }
-};
 
-exports.logIn = async (req, res) => {
-  try {
+});
+
+exports.logIn = catchAsyc(async (req, res) => {
     const user = await User.findOne({ email: req.body.email }).select(
       '+password'
     );
@@ -52,13 +49,7 @@ exports.logIn = async (req, res) => {
         },
       });
     }
-  } catch (err) {
-    res.status(400).send({
-      status: 'failed',
-      message: err,
-    });
-  }
-};
+ });
 
 exports.protect = async (req, res, next) => {
   const { token } = req.body;
